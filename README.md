@@ -1,5 +1,42 @@
 # Estrategias de Inversión Basadas en Momentum, Machine Learning e IA
 
+# Estrategias de Inversión Basadas en Momentum, Machine Learning e IA
+
+## Índice
+
+- [Descripción](#descripción)
+- [Objetivo General](#objetivo-general)
+- [Conceptos Básicos](#conceptos-básicos)
+  - [Momentum financiero](#momentum-financiero)
+  - [Rentabilidad esperada (μ)](#rentabilidad-esperada-μ)
+  - [Riesgo y varianza (σ²)](#riesgo-y-varianza-σ²)
+  - [Backtesting](#backtesting)
+  - [Inercia y rebote](#inercia-y-rebote)
+  - [Machine Learning en el proyecto](#machine-learning-en-el-proyecto)
+- [Arquitectura del Sistema](#arquitectura-del-sistema)
+  - [Componentes principales](#componentes-principales)
+- [Metodología del Proyecto](#metodología-del-proyecto)
+- [Estrategia de Momentum Utilizada](#estrategia-de-momentum-utilizada)
+  - [Parámetros de la Estrategia de Momentum](#parámetros-de-la-estrategia-de-momentum)
+  - [Parámetro X – Escala Temporal (Resampling)](#parámetro-x--escala-temporal-resampling)
+  - [Parámetro K – Longitud del Patrón de Momentum](#parámetro-k--longitud-del-patrón-de-momentum)
+  - [Parámetro N – Horizonte de Mantenimiento (Holding Period)](#parámetro-n--horizonte-de-mantenimiento-holding-period)
+  - [Parámetro J – Umbral de Discretización del Movimiento](#parámetro-j--umbral-de-discretización-del-movimiento)
+  - [Interacción entre los Parámetros](#interacción-entre-los-parámetros)
+  - [Optimización de Parámetros](#optimización-de-parámetros)
+- [Enfoque Multiactivo](#enfoque-multiactivo)
+- [Tipos de Activos Analizados](#tipos-de-activos-analizados)
+  - [Acciones de Alta Volatilidad](#acciones-de-alta-volatilidad)
+  - [Acciones de Baja Volatilidad](#acciones-de-baja-volatilidad)
+  - [ETFs (Exchange-Traded Funds)](#etfs-exchange-traded-funds)
+  - [Forex (Mercado de Divisas)](#forex-mercado-de-divisas)
+  - [Criptomonedas](#criptomonedas)
+  - [Commodities (vía ETF)](#commodities-vía-etf)
+  - [Fondos y ETFs de Bonos y Mercados Globales](#fondos-y-etfs-de-bonos-y-mercados-globales)
+- [Justificación del Enfoque](#justificación-del-enfoque)
+- [Autores](#autores)
+
+
 ## Descripción
 Proyecto centrado en el diseño, análisis y optimización de estrategias de inversión basadas en **momentum financiero**, utilizando **Machine Learning** e **Inteligencia Artificial** para identificar combinaciones óptimas entre **rentabilidad esperada (μ)** y **riesgo (σ²)**.
 
