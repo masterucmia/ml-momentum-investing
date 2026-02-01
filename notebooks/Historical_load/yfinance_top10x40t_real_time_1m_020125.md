@@ -1,236 +1,121 @@
-# yfinance_top10x40t_real_time_1m_020125
+# Ingesta de Datos Financieros de Alta Frecuencia
 
-## Tabla de contenidos
+Alpaca (Acciones) y Dukascopy (Forex M1)
 
-- [Descripción general](#descripción-general)
-- [Objetivo](#objetivo)
-- [Contexto dentro del proyecto](#contexto-dentro-del-proyecto)
-- [Activos monitorizados](#activos-monitorizados)
-- [Frecuencia de ejecución y rate limiting](#frecuencia-de-ejecución-y-rate-limiting)
-- [Arquitectura lógica del notebook](#arquitectura-lógica-del-notebook)
-- [Lógica de polling](#lógica-de-polling)
-- [Flag de cambio](#flag-de-cambio)
-- [Formato de salida](#formato-de-salida)
-- [Zona horaria](#zona-horaria)
-- [Gestión de mercados cerrados](#gestión-de-mercados-cerrados)
-- [Estrategia de obtención de datos (fallback)](#estrategia-de-obtención-de-datos-fallback)
-- [Persistencia y uso de datos](#persistencia-y-uso-de-datos)
-- [Dependencias](#dependencias)
-- [Ejecución](#ejecución)
-- [Limitaciones conocidas](#limitaciones-conocidas)
-- [Casos de uso](#casos-de-uso)
-- [Estado](#estado)
+## Índice
+
+1. [Visión General del Sistema](#visión-general-del-sistema)
+2. [Notebook 1 — Ingesta de Acciones (Alpaca)](#notebook-1--ingesta-de-acciones-alpaca)
+   1. [Objetivo](#objetivo)
+   2. [Funcionalidad](#funcionalidad)
+   3. [Datos Generados](#datos-generados)
+   4. [Limitaciones](#limitaciones)
+3. [Notebook 2 — Ingesta Forex M1 (Dukascopy)](#notebook-2--ingesta-forex-m1-dukascopy)
+   1. [Objetivo](#objetivo-1)
+   2. [Funcionalidad](#funcionalidad-1)
+   3. [Datos Generados](#datos-generados-1)
+   4. [Consideraciones Específicas](#consideraciones-específicas)
+4. [Relación entre Notebooks](#relación-entre-notebooks)
 
 ---
 
-## Descripción general
+## Visión General del Sistema
 
-Este notebook implementa un sistema de **captura de datos financieros en tiempo casi real**, basado en un mecanismo de **polling minuto a minuto**, utilizando la librería yfinance.
+La ingesta de datos se divide por tipo de mercado, utilizando en cada caso la fuente que permite la máxima resolución temporal disponible.
 
-Se monitorizan **40 activos financieros** pertenecientes a distintas clases (acciones, ETFs, criptomonedas, forex y commodities), registrando de forma continua:
+Mercados cubiertos:
 
-- Precio del activo
-- Hora real de cotización del mercado
-- Hora de solicitud del dato
-- Indicador binario de cambio de cotización
+- Acciones y ETFs
+- Divisas (Forex)
 
-El sistema está diseñado para **mantener series temporales continuas**, incluso cuando el mercado no genera nuevas cotizaciones, evitando huecos en los datos y facilitando su uso posterior en análisis cuantitativo.
+Fuentes utilizadas:
 
----
+- Alpaca Markets para acciones y ETFs
+- Dukascopy para Forex
 
-## Objetivo
+Limitación clave del sistema:
 
-Los objetivos principales de este notebook son:
-
-- Obtener precios minuto a minuto de múltiples activos financieros.
-- Detectar si existe un **cambio real de cotización** entre rondas consecutivas.
-- Mantener continuidad temporal aunque el mercado esté cerrado.
-- Evitar huecos en las series temporales.
-- Generar datos reutilizables para análisis de momentum y Machine Learning.
+Alpaca no ofrece datos Forex a resolución de 1 minuto, únicamente a partir de 5 minutos.  
+Para trabajar con Forex M1, el uso de Dukascopy es obligatorio.
 
 ---
 
-## Contexto dentro del proyecto
+## Notebook 1 — Ingesta de Acciones (Alpaca)
 
-Este notebook forma parte del proyecto **ML-MOMENTUM-INVESTING** y constituye la **fase de adquisición de datos de alta frecuencia**.
+### Objetivo
 
-Los datos generados aquí se utilizan posteriormente en notebooks dedicados a:
+Obtener datos históricos OHLCV a frecuencia de 1 minuto para activos bursátiles (acciones o ETFs), cubriendo aproximadamente un año de histórico mediante la API oficial de Alpaca Markets.
 
-- Discretización de señales de momentum (parámetro J).
-- Construcción de variables explicativas.
-- Backtesting de estrategias cuantitativas.
-- Entrenamiento y validación de modelos de Machine Learning.
+### Funcionalidad
 
----
+El notebook realiza las siguientes operaciones:
 
-## Activos monitorizados
+- Autenticación contra la API de Alpaca
+- Descarga de barras OHLCV a resolución de 1 minuto
+- Uso de un feed de mercado soportado
+- Consolidación de los datos en un único dataset temporal
+- Garantía de orden cronológico
+- Exportación del resultado a formato CSV
 
-El notebook monitoriza un total de **40 tickers**, agrupados en las siguientes categorías:
+### Datos Generados
 
-- Acciones (S&P 500 – Top 10)
-- ETFs principales
-- Criptomonedas (vs USD)
-- Forex (Tipos de cambio)
-- Commodities (Futuros)
+- Resolución temporal: 1 minuto
+- Tipo de datos: OHLCV
+- Uso principal:
+  - Backtesting intradía
+  - Análisis de momentum y volatilidad
+  - Construcción de capas base en arquitecturas Lakehouse
+  - Entrenamiento y validación de modelos cuantitativos
 
-La definición completa de los activos se encuentra en el diccionario `ASSET_GROUPS`.
+### Limitaciones
 
----
-
-## Frecuencia de ejecución y rate limiting
-
-- Frecuencia de polling: **1 llamada por ticker cada 60 segundos**
-- Total de llamadas: **hasta 40 llamadas por minuto**
-
-Consideraciones relevantes:
-
-- Yahoo Finance permite aproximadamente **33 llamadas por minuto**.
-- Con **20 activos**, el sistema ha funcionado de forma estable durante varios días continuos.
-- Con **40 activos**, existe riesgo de error _Too Many Requests_.
-
-La frecuencia se controla explícitamente mediante pausas temporales definidas en la variable `POLLING_INTERVAL_SEC`, configurada a 60 segundos.
+- Aplicable únicamente a acciones y ETFs
+- No utilizable para Forex en M1
+- Volumen elevado de datos
+- Requiere gestión segura de credenciales
 
 ---
 
-## Arquitectura lógica del notebook
+## Notebook 2 — Ingesta Forex M1 (Dukascopy)
 
-El notebook sigue una arquitectura secuencial diseñada para ejecución prolongada:
+### Objetivo
 
-1. Definición de activos y parámetros globales.
-2. Inicialización de estructuras de estado por ticker.
-3. Ejecución de un bucle infinito de polling.
-4. Comparación del estado actual con el estado previo.
-5. Registro estructurado de resultados.
-6. Control de tiempo para la siguiente ronda.
+Descargar datos históricos del mercado Forex a frecuencia de 1 minuto para múltiples pares de divisas, cubriendo un año completo sin restricciones de granularidad.
 
-Esta arquitectura permite mantener el sistema en ejecución continua sin pérdida de coherencia temporal.
+### Funcionalidad
 
----
+El notebook realiza las siguientes operaciones:
 
-## Lógica de polling
+- Descarga de datos BID OHLCV desde Dukascopy
+- Procesamiento de ficheros binarios comprimidos
+- Reconstrucción de series temporales minuto a minuto
+- Ingesta diaria para evitar pérdidas de información
+- Consolidación del histórico completo por par
+- Exportación del resultado a formato CSV
 
-En cada ronda de ejecución:
+### Datos Generados
 
-1. Se solicita el último precio disponible del activo.
-2. Se obtiene la **hora real de cotización** del mercado.
-3. Se compara con el último precio y timestamp registrados.
-4. Se determina si existe una actualización efectiva.
+- Resolución temporal: 1 minuto
+- Tipo de datos: OHLCV (precio BID)
+- Uso principal:
+  - Backtesting intradía en Forex
+  - Estrategias de momentum de corto plazo
+  - Análisis de microestructura
+  - Construcción de datasets base para modelos cuantitativos
 
-Esta lógica es necesaria porque:
+### Consideraciones Específicas
 
-- Muchos activos no cotizan cada minuto.
-- Los mercados no operan en fines de semana y festivos.
-- La hora de cotización puede ser anterior a la hora de solicitud.
-
----
-
-## Flag de cambio
-
-Para cada activo y minuto se calcula un indicador binario:
-
-- `1` → el precio o la hora de cotización han cambiado.
-- `0` → no hubo nueva cotización.
-
-Cuando el flag es `0`, se vuelve a registrar el último valor válido, garantizando la continuidad temporal de la serie.
+- Datos correspondientes al lado BID
+- Proceso intensivo en tiempo y red
+- Recomendado para entornos de investigación cuantitativa
 
 ---
 
-## Formato de salida
+## Relación entre Notebooks
 
-Cada activo genera una línea de salida con el siguiente formato lógico:
+Ambos notebooks son complementarios y permiten construir un dataset financiero homogéneo a resolución de 1 minuto, cubriendo:
 
-[REALTIME] número_activo | flag_cambio | grupo | símbolo | precio | hora_cotización | hora_solicitud
+- Acciones y ETFs mediante Alpaca
+- Forex mediante Dukascopy
 
-Donde:
-
-- número_activo: posición del activo dentro de la ronda (1 a 40)
-- flag_cambio: indicador de cambio (1 = cambio, 0 = sin cambio)
-- grupo: categoría del activo
-- símbolo: ticker
-- precio: último precio disponible
-- hora_cotización: hora real del mercado (local)
-- hora_solicitud: hora en que se realiza la petición
-
----
-
-## Zona horaria
-
-La zona horaria base utilizada es **Europe/Madrid**.
-
-Todos los timestamps se convierten desde UTC a hora local para mantener coherencia temporal.
-
----
-
-## Gestión de mercados cerrados
-
-Cuando el mercado está cerrado o no hay nueva cotización:
-
-- Se mantiene el último precio válido.
-- El flag de cambio se marca como `0`.
-- La serie temporal permanece continua.
-
-Este comportamiento es crítico para análisis históricos y backtesting.
-
----
-
-## Estrategia de obtención de datos (fallback)
-
-Para aumentar la robustez frente a inconsistencias internas de Yahoo Finance, los datos se obtienen siguiendo este orden:
-
-1. Información directa del ticker.
-2. Última vela disponible de 1 minuto.
-
----
-
-## Persistencia y uso de datos
-
-Actualmente, los datos se muestran por consola con formato estructurado.
-
-El diseño permite extender fácilmente el sistema para:
-
-- Persistencia en CSV o Parquet.
-- Almacenamiento en bases de datos.
-- Integración con pipelines de datos o sistemas de streaming.
-
----
-
-## Dependencias
-
-- yfinance
-- pandas
-
----
-
-## Ejecución
-
-Desde la raíz del proyecto, ejecutar el notebook o script correspondiente.
-
-La ejecución es continua hasta interrupción manual mediante **Ctrl + C**.
-
----
-
-## Limitaciones conocidas
-
-- No es un feed tick-by-tick real.
-- Los datos pueden estar retrasados.
-- Yahoo Finance puede modificar su comportamiento sin previo aviso.
-- Existe riesgo de rate limiting.
-- No recomendado para trading en vivo.
-
----
-
-## Casos de uso
-
-- Construcción de datasets minuto a minuto.
-- Análisis de microestructura de mercado.
-- Generación de señales de momentum.
-- Backtesting de estrategias cuantitativas.
-- Entrenamiento de modelos de Machine Learning.
-
----
-
-## Estado
-
-- ✔ Funcional
-- ✔ Probado en ejecución prolongada
-- ✔ Integrado en el flujo general del proyecto
+Este enfoque garantiza máxima resolución temporal y coherencia en análisis multi-mercado.
