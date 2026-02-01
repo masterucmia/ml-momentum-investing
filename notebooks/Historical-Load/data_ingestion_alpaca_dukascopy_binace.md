@@ -1,6 +1,6 @@
 # Ingesta de Datos Financieros de Alta Frecuencia
 
-Alpaca (Acciones) y Dukascopy (Forex M1)
+Alpaca (Acciones), Dukascopy (Forex M1) y Binance (Criptomonedas)
 
 ## Índice
 
@@ -15,7 +15,12 @@ Alpaca (Acciones) y Dukascopy (Forex M1)
    2. [Funcionalidad](#funcionalidad-1)
    3. [Datos Generados](#datos-generados-1)
    4. [Consideraciones Específicas](#consideraciones-específicas)
-4. [Relación entre Notebooks](#relación-entre-notebooks)
+4. [Notebook 3 — Ingesta de Criptomonedas (Binance)](#notebook-3--ingesta-de-criptomonedas-binance)
+   1. [Objetivo](#objetivo-2)
+   2. [Funcionalidad](#funcionalidad-2)
+   3. [Datos Generados](#datos-generados-2)
+   4. [Consideraciones Específicas](#consideraciones-específicas-1)
+5. [Relación entre Notebooks](#relación-entre-notebooks)
 
 ---
 
@@ -27,16 +32,21 @@ Mercados cubiertos:
 
 - Acciones y ETFs
 - Divisas (Forex)
+- Criptomonedas
 
 Fuentes utilizadas:
 
 - Alpaca Markets para acciones y ETFs
 - Dukascopy para Forex
+- Binance para criptomonedas
 
-Limitación clave del sistema:
+Limitaciones clave del sistema:
 
-Alpaca no ofrece datos Forex a resolución de 1 minuto, únicamente a partir de 5 minutos.  
-Para trabajar con Forex M1, el uso de Dukascopy es obligatorio.
+- Alpaca no ofrece datos Forex a resolución de 1 minuto, únicamente a partir de 5 minutos.
+- Alpaca y Dukascopy no cubren mercados de criptomonedas.
+
+Para trabajar con Forex M1 es obligatorio el uso de Dukascopy.  
+Para trabajar con criptomonedas se utiliza Binance, que ofrece mercado continuo 24/7.
 
 ---
 
@@ -111,11 +121,57 @@ El notebook realiza las siguientes operaciones:
 
 ---
 
+## Notebook 3 — Ingesta de Criptomonedas (Binance)
+
+### Objetivo
+
+Descargar datos históricos del mercado de criptomonedas, incluyendo Bitcoin y otros criptoactivos de alta liquidez, utilizando datos públicos de Binance y permitiendo granularidades flexibles desde 1 minuto hasta 1 día.
+
+### Funcionalidad
+
+El notebook realiza las siguientes operaciones:
+
+- Consulta dinámica de los pares USDT con mayor volumen en Binance
+- Selección interactiva del criptoactivo a descargar
+- Selección interactiva de la granularidad temporal
+- Definición precisa de una ventana temporal cerrada correctamente
+- Descarga paginada y robusta de klines históricos
+- Manejo de reintentos, rate limits y endpoints alternativos
+- Transformación de los datos en un dataset enriquecido
+- Consolidación en un único fichero CSV
+
+### Datos Generados
+
+- Resolución temporal configurable (1m a 1d)
+- Tipo de datos: OHLCV + métricas derivadas
+- Variables adicionales:
+  - Volúmenes base y quote
+  - Trades
+  - Flujo comprador
+  - VWAP aproximado
+  - Spread absoluto y relativo
+  - Retornos porcentuales
+  - Variables temporales (día de la semana, hora local)
+- Uso principal:
+  - Backtesting intradía y swing en criptoactivos
+  - Análisis de volatilidad y microestructura
+  - Construcción de datasets enriquecidos para modelado cuantitativo
+
+### Consideraciones Específicas
+
+- Mercado continuo 24/7 sin cierres
+- No requiere API keys
+- Volumen de datos elevado
+- Especialmente adecuado para Bitcoin como activo base de análisis
+
+---
+
 ## Relación entre Notebooks
 
-Ambos notebooks son complementarios y permiten construir un dataset financiero homogéneo a resolución de 1 minuto, cubriendo:
+Los tres notebooks son complementarios y permiten construir un dataset financiero homogéneo de alta frecuencia, cubriendo distintos tipos de mercado:
 
 - Acciones y ETFs mediante Alpaca
 - Forex mediante Dukascopy
+- Criptomonedas mediante Binance
 
-Este enfoque garantiza máxima resolución temporal y coherencia en análisis multi-mercado.
+Este enfoque permite análisis comparativos entre mercados, backtesting consistente y el desarrollo de modelos cuantitativos multi-activo.
