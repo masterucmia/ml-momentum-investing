@@ -2,33 +2,43 @@
 
 ## Índice
 
-1. [Arquitectura General](#-arquitectura-general)
-2. [Bronze – Ingesta de Datos OHLCV en Tiempo Casi Real](#-bronze--ingesta-de-datos-ohlcv-en-tiempo-casi-real)
-   - [Objetivo de la Capa Bronze](#-objetivo-de-la-capa-bronze)
-   - [Origen de los Datos](#-origen-de-los-datos)
-   - [Universos de Activos Ingeridos](#-universos-de-activos-ingeridos)
-   - [Modelo de Ingesta](#-modelo-de-ingesta)
-   - [Gestión Temporal y Zonas Horarias](#-gestión-temporal-y-zonas-horarias)
-   - [Estructura y Almacenamiento en Bronze](#-estructura-y-almacenamiento-en-bronze)
-   - [Resultado de la Capa Bronze](#-resultado-de-la-capa-bronze)
-3. [Silver – Normalización y Enriquecimiento OHLCV 1m](#-silver--normalización-y-enriquecimiento-ohlcv-1m-streaming-stateful)
-   - [Objetivo de la Capa Silver](#-objetivo-de-la-capa-silver)
-   - [Origen de los Datos](#-origen-de-los-datos-1)
-   - [Modelo de Procesamiento](#-modelo-de-procesamiento)
-   - [Limpieza y Validaciones Aplicadas](#-limpieza-y-validaciones-aplicadas)
-   - [Normalización Temporal](#-normalización-temporal)
-   - [Normalización de Identificadores](#-normalización-de-identificadores)
-   - [Enriquecimiento con Dimensión de Activos](#-enriquecimiento-con-dimensión-de-activos)
-   - [Lógica de Negocio Introducida](#-lógica-de-negocio-introducida)
-   - [Resultado de la Capa Silver](#-resultado-de-la-capa-silver)
-4. [Gold – Dataset Analítico ML-Ready](#-gold--dataset-analítico-ml-ready-streaming)
-   - [Objetivo de la Capa Gold](#-objetivo-de-la-capa-gold)
-   - [Origen de los Datos](#-origen-de-los-datos-2)
-   - [Modelo de Procesamiento](#-modelo-de-procesamiento-1)
-   - [Validaciones Finales](#-validaciones-finales)
-   - [Selección de Variables](#-selección-de-variables-feature-selection)
-   - [Normalización Temporal](#-normalización-temporal-1)
-   - [Resultado de la Capa Gold](#-resultado-de-la-capa-gold)
+## Índice
+
+1. [Arquitectura General](#arquitectura-general)
+
+2. [Bronze – Ingesta de Datos OHLCV en Tiempo Casi Real](#bronze--ingesta-de-datos-ohlcv-en-tiempo-casi-real)
+   - [Objetivo de la Capa Bronze](#objetivo-de-la-capa-bronze)
+   - [Origen de los Datos](#origen-de-los-datos)
+   - [Universos de Activos Ingeridos](#universos-de-activos-ingeridos)
+   - [Modelo de Ingesta](#modelo-de-ingesta)
+   - [Gestión Temporal y Zonas Horarias](#gestión-temporal-y-zonas-horarias)
+   - [Estructura y Almacenamiento en Bronze](#estructura-y-almacenamiento-en-bronze)
+   - [Resultado de la Capa Bronze](#resultado-de-la-capa-bronze)
+   - [Consideraciones Importantes](#consideraciones-importantes)
+
+3. [Silver – Normalización y Enriquecimiento OHLCV 1m (Streaming Stateful)](#silver--normalización-y-enriquecimiento-ohlcv-1m-streaming-stateful)
+   - [Objetivo de la Capa Silver](#objetivo-de-la-capa-silver)
+   - [Origen de los Datos](#origen-de-los-datos-1)
+   - [Modelo de Procesamiento](#modelo-de-procesamiento)
+   - [Limpieza y Validaciones Aplicadas](#limpieza-y-validaciones-aplicadas)
+   - [Normalización Temporal](#normalización-temporal)
+   - [Normalización de Identificadores](#normalización-de-identificadores)
+   - [Enriquecimiento con Dimensión de Activos](#enriquecimiento-con-dimensión-de-activos)
+   - [Lógica de Negocio Introducida](#lógica-de-negocio-introducida)
+   - [Escritura y Almacenamiento](#escritura-y-almacenamiento)
+   - [Resultado de la Capa Silver](#resultado-de-la-capa-silver)
+   - [Consideraciones Importantes](#consideraciones-importantes-1)
+
+4. [Gold – Dataset Analítico ML-Ready (Streaming)](#gold--dataset-analítico-ml-ready-streaming)
+   - [Objetivo de la Capa Gold](#objetivo-de-la-capa-gold)
+   - [Origen de los Datos](#origen-de-los-datos-2)
+   - [Modelo de Procesamiento](#modelo-de-procesamiento-1)
+   - [Validaciones Finales](#validaciones-finales)
+   - [Selección de Variables (Feature Selection)](#selección-de-variables-feature-selection)
+   - [Normalización Temporal](#normalización-temporal-1)
+   - [Escritura y Almacenamiento](#escritura-y-almacenamiento-1)
+   - [Resultado de la Capa Gold](#resultado-de-la-capa-gold)
+   - [Consideraciones Importantes](#consideraciones-importantes-2)
 
 ---
 
@@ -302,7 +312,7 @@ Silver actúa como **fuente única de verdad intermedia** para la capa Gold.
 
 ---
 
-📌 _La capa Silver transforma datos crudos en información financiera consistente, manteniendo un equilibrio entre fidelidad al origen y preparación analítica._
+_La capa Silver transforma datos crudos en información financiera consistente, manteniendo un equilibrio entre fidelidad al origen y preparación analítica._
 
 ## Gold – Dataset Analítico ML-Ready (Streaming)
 
@@ -320,7 +330,7 @@ Gold prioriza **simplicidad, consistencia y estabilidad del esquema**.
 
 ---
 
-### 🔌 Origen de los Datos
+### Origen de los Datos
 
 - Lectura en **streaming** desde la **capa Silver**, en formato **Delta Lake**.
 - Consumo incremental de nuevos registros conforme Silver los va generando.
