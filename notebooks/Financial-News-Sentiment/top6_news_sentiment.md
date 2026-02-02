@@ -1,6 +1,8 @@
 # Análisis de Noticias Financieras y Sentimiento de Mercado
 
-Top6News — Pipeline híbrido GDELT + RSS + FinBERT
+**Top6News — Pipeline híbrido GDELT + RSS + FinBERT**
+
+---
 
 ## Índice
 
@@ -23,20 +25,20 @@ Top6News — Pipeline híbrido GDELT + RSS + FinBERT
 
 ## Descripción general
 
-Este notebook implementa un pipeline completo de obtención, filtrado, normalización y análisis de sentimiento de noticias financieras, combinando múltiples fuentes de información textual y un modelo de lenguaje especializado en finanzas.
+Este notebook implementa un pipeline completo de **obtención, filtrado, normalización y análisis de sentimiento de noticias financieras**, combinando múltiples fuentes de información textual con un modelo de lenguaje especializado en el dominio financiero.
 
-El objetivo principal es transformar noticias recientes en señales cuantitativas de sentimiento a partir de texto periodístico estructurado y no estructurado.
+El objetivo principal es **transformar noticias financieras recientes en señales cuantitativas de sentimiento**, a partir de texto periodístico estructurado y no estructurado, permitiendo su posterior integración en análisis financieros y modelos cuantitativos.
 
 ---
 
 ## Objetivos del notebook
 
-- Obtener noticias financieras recientes relevantes para un activo, índice o mercado
-- Controlar la calidad de las fuentes informativas mediante una lista blanca de dominios
-- Normalizar textos y metadatos temporales en una zona horaria común
-- Combinar múltiples proveedores de noticias para mejorar la cobertura
-- Aplicar un modelo de sentimiento financiero especializado
-- Transformar texto en señales numéricas agregables
+- Obtener noticias financieras recientes relevantes para un activo, índice o mercado.
+- Controlar la calidad de las fuentes informativas mediante una lista blanca de dominios.
+- Normalizar textos y metadatos temporales bajo una zona horaria común.
+- Combinar múltiples proveedores de noticias para mejorar la cobertura informativa.
+- Aplicar un modelo de sentimiento financiero especializado.
+- Transformar texto periodístico en señales numéricas agregables.
 
 ---
 
@@ -44,26 +46,26 @@ El objetivo principal es transformar noticias recientes en señales cuantitativa
 
 El notebook se ejecuta en un entorno Python con soporte para:
 
-- Manipulación y análisis de datos
-- Consumo de APIs REST y feeds RSS
-- Procesamiento de texto
-- Modelos de lenguaje basados en Transformers
-- Ejecución en entornos Jupyter
+- Manipulación y análisis de datos.
+- Consumo de APIs REST y feeds RSS.
+- Procesamiento y normalización de texto.
+- Modelos de lenguaje basados en arquitecturas Transformer.
+- Ejecución interactiva en entornos Jupyter.
 
-Las versiones concretas de las librerías se documentan para asegurar reproducibilidad del entorno.
+Las versiones concretas de las librerías utilizadas se documentan explícitamente con el fin de **asegurar la reproducibilidad del entorno de ejecución**.
 
 ---
 
 ## Control de calidad de fuentes (Whitelist)
 
-Se define una lista blanca de dominios considerados fiables desde el punto de vista financiero y periodístico.
+Se define una **lista blanca de dominios** considerados fiables desde el punto de vista financiero y periodístico.
 
 Esta whitelist se utiliza para:
 
-- Filtrar resultados devueltos por GDELT y RSS
-- Reducir ruido informativo
-- Evitar sesgos derivados de fuentes no especializadas
-- Asegurar consistencia en los datos de entrada al análisis de sentimiento
+- Filtrar los resultados devueltos por GDELT y RSS.
+- Reducir ruido informativo procedente de fuentes no especializadas.
+- Evitar sesgos derivados de medios de baja calidad.
+- Garantizar consistencia y fiabilidad en los datos de entrada al análisis de sentimiento.
 
 ---
 
@@ -71,51 +73,51 @@ Esta whitelist se utiliza para:
 
 Se implementan funciones auxiliares para:
 
-- Limpieza de HTML en títulos y resúmenes
-- Normalización de fechas provenientes de distintas fuentes
-- Conversión y alineación temporal a una zona horaria de referencia
-- Eliminación de duplicados por título o enlace
+- Limpieza de contenido HTML en títulos y resúmenes.
+- Normalización de fechas procedentes de distintas fuentes.
+- Conversión y alineación temporal a una zona horaria de referencia común.
+- Eliminación de duplicados por título o enlace.
 
-Estas funciones garantizan homogeneidad en los datos de entrada.
+Estas operaciones garantizan la homogeneidad del conjunto de noticias analizadas.
 
 ---
 
 ## Obtención de noticias — Enfoque híbrido
 
-El notebook adopta un enfoque híbrido combinando dos fuentes principales de noticias.
+El pipeline adopta un enfoque híbrido que combina dos fuentes principales de noticias financieras.
 
 ### GDELT
 
-- Consulta al endpoint de documentos de GDELT
-- Ventanas temporales acotadas a noticias recientes
-- Priorización por recencia
-- Normalización de fechas y metadatos
-- Deduplicación básica de resultados
+- Consulta al endpoint de documentos de GDELT.
+- Uso de ventanas temporales acotadas a noticias recientes.
+- Priorización de resultados por recencia.
+- Normalización de fechas y metadatos.
+- Deduplicación básica de artículos.
 
-GDELT aporta cobertura global y estructurada de medios internacionales.
+GDELT proporciona cobertura global y estructurada de medios internacionales.
 
 ---
 
 ### Google News RSS (fallback)
 
-- Construcción dinámica de feeds RSS a partir de queries semánticas
-- Limitación explícita de antigüedad de las noticias
-- Parseo de títulos, resúmenes, enlaces y fechas
-- Descarte de entradas sin fecha válida
+- Construcción dinámica de feeds RSS a partir de queries semánticas.
+- Limitación explícita de la antigüedad de las noticias.
+- Parseo de títulos, resúmenes, enlaces y fechas de publicación.
+- Descarte de entradas sin fecha válida.
 
-Este mecanismo actúa como complemento de cobertura cuando la fuente principal es insuficiente.
+Este mecanismo actúa como complemento cuando la cobertura de la fuente principal es insuficiente.
 
 ---
 
 ## Construcción semántica de queries
 
-Se incluye una capa de expansión semántica de consultas que:
+Se incluye una capa de **construcción semántica de consultas** que:
 
-- Mapea alias conocidos de índices y activos financieros
-- Incorpora sinónimos, tickers y ETFs representativos
-- Captura distintas formas de referencia utilizadas por la prensa financiera
+- Mapea alias conocidos de activos financieros, índices y mercados.
+- Incorpora sinónimos, tickers bursátiles y ETFs representativos.
+- Captura distintas formas de referencia utilizadas por la prensa financiera.
 
-Esta capa mejora la recuperación de noticias relevantes.
+Esta capa mejora la recuperación de noticias relevantes y reduce la dependencia de una única forma textual de búsqueda.
 
 ---
 
@@ -123,25 +125,27 @@ Esta capa mejora la recuperación de noticias relevantes.
 
 La metodología combina:
 
-- Un número controlado de noticias procedentes de GDELT
-- Un número controlado de noticias procedentes de RSS
-- Deduplicación global por título y enlace
-- Normalización de campos comunes
+- Un número controlado de noticias procedentes de GDELT.
+- Un número controlado de noticias procedentes de RSS.
+- Deduplicación global por título y enlace.
+- Normalización de campos comunes entre proveedores.
 
-El resultado es un conjunto reducido y relevante de noticias recientes.
+El resultado es un conjunto reducido, reciente y relevante de noticias financieras.
 
 ---
 
 ## Modelo de sentimiento financiero
 
-Se utiliza un modelo de lenguaje especializado en finanzas basado en arquitectura Transformer.
+Se emplea un modelo de lenguaje especializado en finanzas basado en arquitectura Transformer.
 
 Características principales:
 
-- Clasificación en positivo, neutral o negativo
-- Probabilidad asociada a cada predicción
-- Adaptación específica a textos financieros
-- Ejecución en CPU para garantizar portabilidad
+- Clasificación del sentimiento en positivo, neutral o negativo.
+- Probabilidad asociada a cada predicción.
+- Entrenamiento específico sobre textos financieros.
+- Ejecución en CPU para garantizar portabilidad y reproducibilidad.
+
+El modelo se utiliza exclusivamente en modo inferencia, sin ajuste fino adicional.
 
 ---
 
@@ -149,10 +153,10 @@ Características principales:
 
 Para cada noticia:
 
-- Se prioriza el uso combinado de título y resumen cuando ambos están disponibles
-- En ausencia de resumen, se utiliza únicamente el título
+- Se prioriza el uso combinado de **título y resumen** cuando ambos están disponibles.
+- En ausencia de resumen, se utiliza únicamente el título.
 
-Esta decisión controla el contexto textual evaluado por el modelo de sentimiento.
+Esta decisión define el contexto textual evaluado por el modelo de sentimiento.
 
 ---
 
@@ -160,9 +164,9 @@ Esta decisión controla el contexto textual evaluado por el modelo de sentimient
 
 El sentimiento categórico se transforma en una señal escalar:
 
-- Positivo → +1
-- Neutral → 0
-- Negativo → −1
+- Positivo → +1  
+- Neutral → 0  
+- Negativo → −1  
 
 El valor final se obtiene ponderando la polaridad por la probabilidad asociada a la predicción, permitiendo comparaciones cuantitativas y agregación temporal.
 
@@ -170,10 +174,10 @@ El valor final se obtiene ponderando la polaridad por la probabilidad asociada a
 
 ## Agregación temporal del sentimiento
 
-Las noticias procesadas se agrupan a nivel diario para:
+Las noticias procesadas se agrupan a nivel diario con el objetivo de:
 
-- Construir una serie temporal de sentimiento
-- Reducir ruido individual por noticia
-- Facilitar su análisis y visualización temporal
+- Construir una serie temporal de sentimiento de mercado.
+- Reducir el ruido individual por noticia.
+- Facilitar el análisis y la visualización temporal.
 
-Este paso produce una señal de sentimiento agregada por día.
+Este paso produce una señal diaria agregada de sentimiento, lista para su integración en análisis financieros posteriores.
