@@ -62,17 +62,7 @@ Hora entrada: N/A
 
 ---
 
-## 5. Separador Visual
-
-Se utiliza la siguiente línea para separar secciones:
-
-```
-━━━━━━━━━━━━━━
-```
-
----
-
-## 6. Caso BUY – Nueva Entrada
+## 5. Caso BUY – Nueva Entrada
 
 Condición:
 
@@ -105,17 +95,17 @@ TRD-00123
 
 ---
 
-## 7. Caso SELL – Cierre de Posición
+## 6. Caso SELL – Cierre de Posición
 
 Se ejecuta cuando la señal no es `"BUY"`.
 
-### 7.1 Cálculo de PnL
+### 6.1 Cálculo de PnL
 
 ```python
 pnl = r.pnl_pct
 ```
 
-### 7.2 Determinación del Título
+### 6.2 Determinación del Título
 
 | Condición  | Título              |
 | ---------- | ------------------- |
@@ -125,7 +115,7 @@ pnl = r.pnl_pct
 
 ---
 
-### 7.3 Cálculo de Duración
+### 6.3 Cálculo de Duración
 
 ```python
 horas = r.hold_minutes // 60
@@ -140,7 +130,7 @@ Hold: 3h 25m
 
 ---
 
-### 7.4 Información mostrada en SELL
+### 6.4 Información mostrada en SELL
 
 - Asset
 - Tipo de estrategia
@@ -174,7 +164,7 @@ TRD-00123
 
 ---
 
-## 8. Características del Formato
+## 7. Características del Formato
 
 - Usa bloque `<pre>` para mantener alineación
 - Separa visualmente las secciones
@@ -183,7 +173,7 @@ TRD-00123
 
 ---
 
-## 9. Consideraciones Técnicas
+## 8. Consideraciones Técnicas
 
 - Validar `hold_minutes` en SELL para evitar errores si es `None`
 - Asegurar que todos los atributos del objeto `r` estén presentes
