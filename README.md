@@ -122,7 +122,7 @@ El sistema implementa una arquitectura híbrida **batch + streaming** para la de
 - **Modelos de Machine Learning** para inferencia y optimización.
 - **Monitorización, gobierno del dato y control de accesos**.
 
-## <img width="1201" height="1192" alt="Arquitectura de Detección de Momentum Financiero en Tiempo Real" src="https://github.com/user-attachments/assets/68ce5a00-e504-4351-b431-8eb1bb399f79" />
+## <img width="1203" height="907" alt="Arquitectura Real Time - TFM" src="https://github.com/user-attachments/assets/c450789d-7f99-483a-965a-b024b14e9412" />
 
 ## Metodología del Proyecto
 
@@ -374,7 +374,7 @@ El uso de un universo tan amplio de activos permite:
 
 - Gilberto Augusto Alzuru Díaz
 - Miguel Alberto Calixto Godínez
-- George Jonnatha Carlos Sixto
+- George Jhonnata Carlos Sixto
 - Juan Antonio Linares Guerra
 - César Vicente Luna Martínez
-- Mauricio Zapata Querubin
+- Mauricio Zapata Querubín
