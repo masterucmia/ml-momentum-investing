@@ -374,7 +374,7 @@ El uso de un universo tan amplio de activos permite:
 
 - Gilberto Augusto Alzuru Díaz
 - Miguel Alberto Calixto Godínez
-- George Jhonnata Carlos Sixto
+- George Jhonnatan Carlos Sixto
 - Juan Antonio Linares Guerra
 - César Vicente Luna Martínez
 - Mauricio Zapata Querubín
